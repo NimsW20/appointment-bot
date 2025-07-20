@@ -18,17 +18,17 @@ obj appointment {
 }
 
 def print_appointment(appt: appointment) {
-    print("Appointment Details:");
-    print("Date: " + (appt.date if appt.date is not None and appt.date != "" else "null"));
-    print("Time: " + (appt.time if appt.time is not None and appt.time != "" else "null"));
-    print("Type: " + (appt.type if appt.type is not None and appt.type != "" else "null"));
-    print("Customer Name: " + (appt.customer_name if appt.customer_name is not None and appt.customer_name != "" else "null"));
-    print("Customer Telephone: " + (appt.customer_telephone if appt.customer_telephone is not None and appt.customer_telephone != "" else "null"));
-    print("Description: " + (appt.description if appt.description is not None and appt.description != "" else "null"));
+print("Appointment Details:");
+print("Date:", appt.date);
+print("Time:", appt.time);
+print("Type:", appt.type);
+print("Customer Name:", appt.customer_name);
+print("Customer Telephone:", appt.customer_telephone);
+print("Description:", appt.description);
 }
 
 
-"""This function will create an appointment object based on user input.If any field is missing, it will be set to NONE.DO NOT ADD GENERATIVE DETAILS"""
+"""This function will create an appointment object based on user input by extracting necesry details from the prompt. If any field is missing, it will be set to "MISSING"."""
 def create_appointment(prompt: str) -> appointment by llm();
 
 """This function will ask the user for any missing fields in the appointment."""
@@ -42,12 +42,12 @@ def update_appointment(user_ppointment: appointment,user_input : str) -> appoint
 
 def check_missing_fields(user_appointment: appointment) -> bool {
     return (
-        (user_appointment.date == "Missing") or
-        (user_appointment.time == "Missing") or
-        (user_appointment.type == "Missing") or
-        (user_appointment.customer_name == "Missing") or
-        (user_appointment.customer_telephone == "Missing") or
-        (user_appointment.description == "Missing")
+        (user_appointment.date == "MISSING") or
+        (user_appointment.time == "MISSING") or
+        (user_appointment.type == "MISSING") or
+        (user_appointment.customer_name == "MISSING") or
+        (user_appointment.customer_telephone == "MISSING") or
+        (user_appointment.description == "MISSING")
     );
 }
 
@@ -75,11 +75,12 @@ def new_chat(user_input: str) -> int by llm();
 
 
 with entry {
-    user_input = input("Say Hi:");
+    #user_input = input("Say Hi:");
+    user_input = "Hi,My name is Mihiran. I want to create a new appointment for tomorrow at 10:00 AM.";
     catergory = new_chat(user_input);
     if catergory == 1 {
         print("Lets create a new appointment.");
-        add_a_new_appointment("");
+        add_a_new_appointment(user_input);
     } else{
         print("This feature is not implemented yet.");
     }

@@ -14,8 +14,11 @@ obj appointment {
     has type: str;
     has customer_name: str;
     has customer_telephone: str;
-    has description: str;
+    has Remarks: str;
 }
+
+sem appointment.type = "Type of appointment. Hair cut, Massage, Facial,Hair color, etc.";
+
 
 def print_appointment(appt: appointment) {
 print("Appointment Details:");
@@ -24,14 +27,14 @@ print("Time:", appt.time);
 print("Type:", appt.type);
 print("Customer Name:", appt.customer_name);
 print("Customer Telephone:", appt.customer_telephone);
-print("Description:", appt.description);
+print("Remarks:", appt.Remarks);
 }
 
 
 """This function will create an appointment object based on user input by extracting necesry details from the prompt. If any field is missing, it will be set to "MISSING"."""
 def create_appointment(prompt: str) -> appointment by llm();
 
-"""This function will ask the user for any missing fields in the appointment."""
+"""This function will ask the user for any missing fields in the appointment in a human friendly way in string format. Be really manner full.Adress customer in first person manner"""
 def ask_for_missing_fields(user_appointment: appointment) -> str by llm();
 
 """This function will get appoinment with some missing fields and update the appointment with user input.If any field is not clear or not provided, it will be set to Missing."""
@@ -47,7 +50,7 @@ def check_missing_fields(user_appointment: appointment) -> bool {
         (user_appointment.type == "MISSING") or
         (user_appointment.customer_name == "MISSING") or
         (user_appointment.customer_telephone == "MISSING") or
-        (user_appointment.description == "MISSING")
+        (user_appointment.Remarks == "MISSING")
     );
 }
 
@@ -58,8 +61,8 @@ def add_a_new_appointment(user_input : str) -> appointment {
     while (check_missing_fields(user_appointment)) {
         ask_null_fields = ask_for_missing_fields(user_appointment);
         print(ask_null_fields);
-        update_appointments_values =input("");
-        #update_appointments_values = "New date is 2023-10-01, time is 10:00 AM";
+        #update_appointments_values =input("");
+        update_appointments_values = "o remarks, I want to get a hair cut and my teleohone number is 01120702678";
         user_appointment = update_appointment(user_appointment, update_appointments_values);
     }
     print_appointment(user_appointment);

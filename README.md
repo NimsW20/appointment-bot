@@ -1,6 +1,6 @@
 # 🤖 AppointBot
 
-AppointBot is a simple chatbot application that allows users to **make** and **delete appointments**.
+AppointBot is a simple chatbot application that allows users to **make** appointments and **store them in a database**, as well as **delete appointments**.
 
 🔧 *Updating feature is currently in progress.*
 
@@ -8,8 +8,8 @@ AppointBot is a simple chatbot application that allows users to **make** and **d
 
 ## 🚀 Features
 
-- 📅 Create new appointments  
-- ❌ Delete existing appointments  
+- 📅 Create new appointments and save them to a database  
+- ❌ Delete existing appointments from the database  
 - 🔄 Update functionality (coming soon)
 
 ---
@@ -24,3 +24,4 @@ jac serve server.jac
 
 # Run the client
 python3 client.py
+```

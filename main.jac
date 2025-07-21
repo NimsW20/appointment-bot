@@ -39,11 +39,16 @@ print("Remarks:", appt.Remarks);
 """This function will create an appointment object based on user input by extracting necesry details from the prompt. If any field is missing, it will be set to "MISSING"."""
 def create_appointment(prompt: str) -> Appointment by llm();
 
-"""This function will ask the user for any missing fields in the appointment in a human friendly way in string format. Be really manner full.Adress customer in first person manner"""
+"""This function will ask the user for any missing fields in the appointment in a human friendly way in string format. Be really manner full.Adress customer in first person manner. And human friendly way"""
 def ask_for_missing_fields(user_appointment: Appointment) -> str by llm();
 
-"""This function will get appoinment with some missing fields and update the appointment with user input.If any field is not clear or not provided, it will be set to Missing."""
+"""This function will get appoinment with some missing fields and update the appointment with user input.If any field is not clear or not provided, it will be set to Missing.Keep the out[ut human]"""
 def update_appointment(user_ppointment: Appointment,user_input : str) -> Appointment by llm();
+
+""" """
+def get_appointment_id_to_delete_the_appointment(user_input:str,previous_conversation:str) -> int by llm(); 
+   
+
 
 # """This function will get appoinment with some missing fields and update the appointment with user input."""
 # def update_appointment(appointment: appointment,user_input : str) -> str by llm(method="Reason");
@@ -67,7 +72,8 @@ def add_a_new_appointment(user_input : str) -> Appointment {
         ask_null_fields = ask_for_missing_fields(user_appointment);
         print(ask_null_fields);
         #update_appointments_values =input("");
-        update_appointments_values = "No remarks, I want to get a hair cut and my teleohone number is 01120702678";
+        update_appointments_values = input("");
+        #update_appointments_values = "No remarks, I want to get a hair cut and my teleohone number is 01120702678";
         user_appointment = update_appointment(user_appointment, update_appointments_values);
     }
     print_appointment(user_appointment);
@@ -100,6 +106,8 @@ def add_a_new_appointment_to_db(user_appointment: Appointment) -> int {
     print("Appointment added to the database with ID:", appointment_number);
     return appointment_number;
 }
+
+
 
 def fetch_appointment_by_id(appointment_id: int) -> Appointment {
     cursor.execute("SELECT * FROM appointments WHERE id = ?", (appointment_id,));
@@ -139,25 +147,52 @@ def new_chat(user_input: str) -> int by llm();
 
 
 with entry {
+    user_inputs_full = "";
     appointment_init();
+    print("Welcome to the Appointment Bot for Hair Salon!");
+    print("I can help you with creating, updating, and deleting appointments.");
+    print("How can I assist you today?");
     #TEst
-    #user_input = input("Say Hi:");
-    user_input = "Hi,My name is Mihiran. I want to create a new appointment for tomorrow at 10:00 AM.";
-    catergory = new_chat(user_input);
-    if catergory == 1 {
-        print("Lets create a new appointment.");
-        appointment = add_a_new_appointment(user_input);
-        appointment_number = add_a_new_appointment_to_db(appointment);
-        print("Appointment created successfully with ID:", appointment_number);
-    } else{
-        print("This feature is not implemented yet.");
+    while 1{
+        user_input = input("Say Hi:");
+        user_inputs_full += user_input + "\n";
+        #user_input = "Hi,My name is Mihiran. I want to create a new appointment for tomorrow at 10:00 AM.";
+        catergory = new_chat(user_input);
+        if catergory == 1 {
+            print("Lets create a new appointment.");
+            appointment = add_a_new_appointment(user_input);
+            appointment_number = add_a_new_appointment_to_db(appointment);
+            print("Appointment created successfully with ID:", appointment_number);
+        } elif catergory == 2 {
+            print("Lets delete an appointment.");
+            print("Whats your appointment ID?");
+            user_input = input("");
+            user_inputs_full += user_input + "\n";
+            appointment_id = get_appointment_id_to_delete_the_appointment(user_input, user_inputs_full);
+            delete_appointment_by_id(appointment_id);
+            print("Appointment with ID:", appointment_id, "has been deleted.");
+            
+        } elif catergory == 3 {
+            print("Your request is not clear. Please provide more information.");
+            continue;
+        
+        } elif catergory == 4 {
+            print("Exiting the chat.");
+            exit();
+        } else {
+            print("This feature is not implemented yet.");
+            print("Your request is not clear. Please provide more information.");
+            continue;
+        }
+
+        # fetched_appointment = fetch_appointment_by_id(appointment_number);
+        # print("Fetched Appointment Details:");
+        # print_appointment(fetched_appointment);
+
+        break;
+        print("Thank you for using the appointment bot. Have a great day!");
     }
-
-    fetched_appointment = fetch_appointment_by_id(appointment_number);
-    print("Fetched Appointment Details:");
-    print_appointment(fetched_appointment);
-
-    delete_appointment_by_id(1);
+    
 
     #Fectch the first entry from the appointments table
     # cursor.execute("SELECT * FROM appointments ORDER BY id ASC LIMIT 1");
@@ -169,6 +204,3 @@ with entry {
     #     print("No appointments found in the database.");
     # }
 }
-
-
-

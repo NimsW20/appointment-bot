@@ -3,6 +3,7 @@ import requests
 # Example endpoint for the appointment_bot API
 url = "http://localhost:8000/walker/appointment_bot"
 
+print("Welcome to the Appointment Bot for Hair Salon! I can help you with creating, updating, and deleting appointments. How can I assist you today?")
 while True:
     # Get user input
     message = input("message: ")

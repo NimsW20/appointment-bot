@@ -2,14 +2,8 @@ import from mtllm.llm {Model}
 
 import sqlite3; # For database operations
 
+
 glob llm = Model(model_name="gemini/gemini-2.0-flash");
-
-#import from mtllm.llm { Model }
-
-# glob llm = Gemini(
-#     model_name="gemini-2.0-flash"
-# );
-
 obj Appointment {
     has date: str;
     has time: str;
@@ -141,15 +135,53 @@ def delete_appointment_by_id(appointment_id: int) {
 "This function will start a new chat with the user and return int values 1 - New Appointment, 2 - Delete and Appointment. 3 - Need More Information, 4 - Exit."
 def new_chat(user_input: str) -> int by llm();
 
+glob status: int = 0;
+glob catergory: int = 0;
+glob user_inputs_full: str = "";
+glob user_appointment: Appointment;
 
-glob status =0;
+
+
 def main_chat(request: str) -> str {
+    global user_appointment;
+    global status;
+    global catergory;
+    global user_inputs_full;
     response = "";
+
     if status == 0 {
         response = "Welcome to the Appointment Bot for Hair Salon! I can help you with creating, updating, and deleting appointments. How can I assist you today?";
         status = 1;
-    } elif status == 1 {
-        response = "What would you like to do? 1 - New Appointment, 2 - Delete Appointment, 3 - Need More Information, 4 - Exit";
+    } elif (status == 1||status == 12) {
+        if not(status ==12){
+        catergory = new_chat(request);
+        }
+        if catergory == 1 {
+            user_appointment = create_appointment(request);
+            status = 12;
+
+            if (status == 12) {
+                ask_null_fields = ask_for_missing_fields(user_appointment);
+                response = ask_null_fields;
+            }
+
+            if not(check_missing_fields(user_appointment)){
+                appointment_number = add_a_new_appointment_to_db(appointment);
+                response += f"Appointment created successfully with ID: {appointment_number}";
+            }
+            
+        } elif catergory == 2 {
+            response = "Lets delete an appointment.";
+            response += "Whats your appointment ID?";
+            user_input = input("");
+            user_inputs_full += request + "\n";
+            appointment_id = get_appointment_id_to_delete_the_appointment(request, user_inputs_full);
+            delete_appointment_by_id(appointment_id);
+            response = "Appointment with ID:" + str(appointment_id) + " has been deleted.";
+        } elif catergory == 3 {
+            response = "Your request is not clear. Please provide more information.";
+        }
+        
     }else {
         response = "Your request is not clear. Please provide more information.";
         
@@ -157,71 +189,40 @@ def main_chat(request: str) -> str {
     return response;
 
 }
-    
-
-
-    
-   
-
-   
 
 
 
-with entry {
-    user_inputs_full = "";
-    appointment_init();
-    print("Welcome to the Appointment Bot for Hair Salon!");
-    print("I can help you with creating, updating, and deleting appointments.");
-    print("How can I assist you today?");
-    #TEst
-    while 1{
-        user_input = input("Say Hi:");
-        user_inputs_full += user_input + "\n";
-        #user_input = "Hi,My name is Mihiran. I want to create a new appointment for tomorrow at 10:00 AM.";
-        catergory = new_chat(user_input);
-        if catergory == 1 {
-            print("Lets create a new appointment.");
-            appointment = add_a_new_appointment(user_input);
-            appointment_number = add_a_new_appointment_to_db(appointment);
-            print("Appointment created successfully with ID:", appointment_number);
-        } elif catergory == 2 {
-            print("Lets delete an appointment.");
-            print("Whats your appointment ID?");
-            user_input = input("");
-            user_inputs_full += user_input + "\n";
-            appointment_id = get_appointment_id_to_delete_the_appointment(user_input, user_inputs_full);
-            delete_appointment_by_id(appointment_id);
-            print("Appointment with ID:", appointment_id, "has been deleted.");
-            
-        } elif catergory == 3 {
-            print("Your request is not clear. Please provide more information.");
-            continue;
+
+
+with entry{
+    # while 1 {
+    #     user_input = input("Say Hi:");
+    #     response = main_chat(user_input);
+    #     print(response);
         
-        } elif catergory == 4 {
-            print("Exiting the chat.");
-            exit();
-        } else {
-            print("This feature is not implemented yet.");
-            print("Your request is not clear. Please provide more information.");
-            continue;
-        }
+    # }
+    
+}
 
-        # fetched_appointment = fetch_appointment_by_id(appointment_number);
-        # print("Fetched Appointment Details:");
-        # print_appointment(fetched_appointment);
+# Public endpoint (no authentication)
+walker appointment_bot {
+    has message : str;
+    obj __specs__ {
+        
+        static has auth: bool = False;
+    }
 
-        break;
-        print("Thank you for using the appointment bot. Have a great day!");
+    can reply with `root entry{
+        response = main_chat(self.message);
+        
+        report {
+            "Reply": response
+            #self.message;
+            };
+
     }
     
 
-    #Fectch the first entry from the appointments table
-    # cursor.execute("SELECT * FROM appointments ORDER BY id ASC LIMIT 1");
-    # first_entry = cursor.fetchone();
-    # if first_entry is not None {
-    #     print("First appointment entry:");
-    #     print(first_entry);
-    # } else {
-    #     print("No appointments found in the database.");
-    # }
 }
+
+   
